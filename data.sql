@@ -97,10 +97,10 @@ INSERT INTO GameSessions (event_id, copy_id, facilitated_by)
 VALUES
   (2, 3, 5), -- Cascadia (copy #3), Eryka again
   (2, 5, 3), -- Avalon (copy #5), Jason
-  (2, 8, 1)  -- 7 Wonders copy #8, let's pretend 'member_id=1' is "Josh"? 
+  (2, 8, 1)；  -- 7 Wonders copy #8, let's pretend 'member_id=1' is "Josh"? 
              -- But wait, he's not an Exec. This might violate the foreign key. 
              -- So better use an Exec, e.g. (2, 8, 4) => Zach
-;
+
 
 -- Basement Clocktower events 
 INSERT INTO GameSessions (event_id, copy_id, facilitated_by)
