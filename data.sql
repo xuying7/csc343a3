@@ -44,8 +44,7 @@ VALUES
   ('Cascadia',                'Strategy',         1, 4,  'AEG',                      2021),
   ('Cryptid',                 'Strategy',         3, 5,  'Osprey Games',             2018),
   ('Avalon',                  'Social-deduction', 5, 10, 'Indie Boards & Cards',     2012),
-  ('7 Wonders',               'Strategy',         2, 7,  'Repos Production',         2010)
-;
+  ('7 Wonders',               'Strategy',         2, 7,  'Repos Production',         2010);
 
 -- Copies 
 -- (We have multiple copies for Avalon and 7 Wonders as in glg-data.txt)
@@ -67,8 +66,7 @@ VALUES
   ('Weekly Boardgame Event',  'BA 1200',      '2025-03-12'),
   ('Basement Clocktower',     'UC Basement',  '2025-03-05'),
   ('Basement Clocktower',     'UC Basement',  '2025-03-12'),
-  ('Winter Social',           'Outside Quad', '2025-02-27')
-;
+  ('Winter Social',           'Outside Quad', '2025-02-27');
 
 -- OrganizingCommittee 
 -- We'll guess the event_ids from the nextval or by simple ordering: 
@@ -90,7 +88,7 @@ VALUES
 INSERT INTO GameSessions (event_id, copy_id, facilitated_by)
 VALUES
   (1, 2, 5), -- Turing Machine on 3/5, facilitated by Eryka
-  (1, 7, 3), -- 7 Wonders (copy #7) on 3/5, facilitated by Jason
+  (1, 7, 3); -- 7 Wonders (copy #7) on 3/5, facilitated by Jason
 
 -- Another set for Weekly 3/12
 INSERT INTO GameSessions (event_id, copy_id, facilitated_by)
