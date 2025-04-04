@@ -1,0 +1,35 @@
+Notes:
+This data is described in a way that is not intended to suggest what your
+database design should be! This data is loosely based on actual GLG events,
+but is not intended to be accurate. 
+
+This data was very loosely inspired from GLG (UofT student club for boardgame enthusiasts).
+Check them out here if you are interested: https://discord.gg/tpY5VqxDyp
+
+You are welcome to use that list for inspiration for the rest of your data,
+but you do not have to. 
+
+=== Board Games ===
+The club owns one copy each of "Blood on the Clocktower", "Turing Machine", "Cascadia" and "Cryptid".
+And two copies each of "Avalon" and "7 Wonders".
+
+
+=== Events ===
+GLG runs a weekly boardgame event every Wednesday from 6-10pm (organized by Jason).
+This term they have been organizing a special "basement clocktower" event to play "Blood on the Clocktower" that happens every Wednesday after 10pm (organized by Zach).
+In Winter break, GLG had a fun social event where they organized an outdoor event (organized by Josh as lead and Eryka). No games were played in that event.
+
+
+=== Game Sessions ===
+There were 2 game sessions on 5th March weekly event.
+Eryka facilitated and played "Turing Machine" with Josh and Grace.
+Jason facilitated a game of "7 Wonders" for Tawfiq, Jimbo, Evelyn and Christian.
+
+And the following 3 sessions on 12th March weekly event.
+Eryka facilitated a game of "Cascadia" for Grace, Evelyn and Ella.
+Jason facilitated and played "Avalon" with Jimbo, Tawfiq, Cameron, Zach and Honda.
+Josh facilitated and played "7 Wonders" with Justin, Ari and Max.
+
+There was 1 game session of "Blood on the Clocktower" for each "basement clocktower" event on 5th and 12th March.
+Zach facilitated the game both times for Jimbo, Tawfiq, Jason, Evelyn, Honda and Akshay.
+
