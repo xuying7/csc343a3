@@ -1,51 +1,31 @@
+-- schema.ddl
 DROP SCHEMA IF EXISTS A3GLG CASCADE;
 CREATE SCHEMA A3GLG;
 SET SEARCH_PATH TO A3GLG;
 
--- ============================================================================
--- schema.ddl
--- Part 1
--- ============================================================================
-
 /*
-  Could not enforce with simple DDL:
-    - "No member can play in two sessions at the same time."
-    - "No exec can facilitate two sessions at once or facilitate one while 
-       playing a different session at the same time."
-    - "An event’s organizing committee must have exactly one lead exec."
-      (We only ensure is_lead is a boolean. Checking 'exactly one' would 
-       require triggers or more advanced constraints.)
-  
-  Did not enforce (optional constraints):
-    - enumerations for category or condition, but we could have used a CHECK.
-    - multi-col constraints about min_players <= max_players.
-
-  Extra constraints:
-    - We made email UNIQUE for convenience.
-  
   Assumptions:
-    - We use integer IDs for everything (SERIAL in Postgres).
-    - We allow any text for 'category', 'condition', etc., trusting the data entry.
+    - Integer IDs (SERIAL) are used for all entities.
+    - Enumerated values (e.g., category, condition) are enforced via CHECK constraints.
+    - A partial index ensures only one lead per event (OrganizingCommittee).
 */
 
 -------------------------------------------------------------------------------
 -- Table: Members
--- Contains all club members (including execs).
 -------------------------------------------------------------------------------
 CREATE TABLE Members (
     member_id       SERIAL PRIMARY KEY,
     member_name     VARCHAR(100) NOT NULL,
     email           VARCHAR(200) NOT NULL UNIQUE,
-    level_of_study  VARCHAR(20) NOT NULL  -- e.g. 'Undergraduate', 'Graduate', 'Alumni'
+    level_of_study  VARCHAR(20) NOT NULL 
+        CHECK (level_of_study IN ('Undergraduate', 'Graduate', 'Alumni'))
 );
 
 COMMENT ON TABLE Members IS
-'Stores all GLG members. Each row is one member.';
-
+'Stores all GLG members. Each member has a unique email and study level.';
 
 -------------------------------------------------------------------------------
 -- Table: Execs
--- Subclass of Members with additional columns: role, date_assumed
 -------------------------------------------------------------------------------
 CREATE TABLE Execs (
     member_id    INTEGER PRIMARY KEY,
@@ -58,49 +38,46 @@ CREATE TABLE Execs (
 );
 
 COMMENT ON TABLE Execs IS
-'Stores additional info for exec members (role, date_assumed). member_id references Members.';
-
+'Executive members with additional roles and start dates. Subset of Members.';
 
 -------------------------------------------------------------------------------
 -- Table: BoardGames
--- Each row is a distinct game (title, min/max players, etc.)
 -------------------------------------------------------------------------------
 CREATE TABLE BoardGames (
     game_id      SERIAL PRIMARY KEY,
     title        VARCHAR(100) NOT NULL,
-    category     VARCHAR(30) NOT NULL,  -- e.g. 'Strategy', 'Party', etc.
+    category     VARCHAR(30) NOT NULL 
+        CHECK (category IN ('Strategy', 'Party', 'Deck-building', 
+                            'Role-playing', 'Social-deduction')),
     min_players  INT NOT NULL,
-    max_players  INT NOT NULL,
+    max_players  INT NOT NULL CHECK (min_players <= max_players),
     publisher    VARCHAR(100),
     release_year INT
 );
 
 COMMENT ON TABLE BoardGames IS
-'Various board game definitions. E.g. "Cascadia," "Blood on the Clocktower," etc.';
-
+'Board game metadata. Includes player limits and category constraints.';
 
 -------------------------------------------------------------------------------
 -- Table: Copies
--- The club can own multiple copies of the same game.
 -------------------------------------------------------------------------------
 CREATE TABLE Copies (
     copy_id          SERIAL PRIMARY KEY,
     game_id          INTEGER NOT NULL,
     acquisition_date DATE,
-    condition        VARCHAR(20) NOT NULL,  -- e.g. 'New','Lightly-used','Damaged'
+    condition        VARCHAR(20) NOT NULL 
+        CHECK (condition IN ('New', 'Lightly-used', 'Worn', 
+                             'Incomplete', 'Damaged')),
     CONSTRAINT fk_copy_game
         FOREIGN KEY (game_id)
         REFERENCES BoardGames (game_id)
 );
 
 COMMENT ON TABLE Copies IS
-'Physical copies of a particular BoardGame. Each row is one copy.';
-
+'Physical copies of games. Condition enforced to valid states.';
 
 -------------------------------------------------------------------------------
 -- Table: Events
--- Each row is one event (name, location, date).
--- Same event_name can happen on different dates.
 -------------------------------------------------------------------------------
 CREATE TABLE Events (
     event_id    SERIAL PRIMARY KEY,
@@ -110,13 +87,10 @@ CREATE TABLE Events (
 );
 
 COMMENT ON TABLE Events IS
-'Various events organized by the club (Weekly Boardgame, special events, etc.)';
-
+'Events organized by GLG. Same name can have multiple occurrences.';
 
 -------------------------------------------------------------------------------
 -- Table: OrganizingCommittee
--- Which execs are on the committee for a given event. 
--- is_lead indicates if that exec is lead. (We cannot easily enforce "exactly 1" lead.)
 -------------------------------------------------------------------------------
 CREATE TABLE OrganizingCommittee (
     event_id  INTEGER NOT NULL,
@@ -131,20 +105,22 @@ CREATE TABLE OrganizingCommittee (
         REFERENCES Execs (member_id)
 );
 
-COMMENT ON TABLE OrganizingCommittee IS
-'Link table: which Execs form the organizing team for each event, with possibly one lead.';
+-- Enforce one lead per event
+CREATE UNIQUE INDEX one_lead_per_event 
+    ON OrganizingCommittee (event_id) 
+    WHERE is_lead;
 
+COMMENT ON TABLE OrganizingCommittee IS
+'Event organizing teams. Only one lead allowed per event (partial index).';
 
 -------------------------------------------------------------------------------
 -- Table: GameSessions
--- Each event can have multiple sessions. 
--- Each session uses a particular Copy and is facilitated by one exec.
 -------------------------------------------------------------------------------
 CREATE TABLE GameSessions (
     session_id     SERIAL PRIMARY KEY,
     event_id       INTEGER NOT NULL,
     copy_id        INTEGER NOT NULL,
-    facilitated_by INTEGER NOT NULL,  -- must be an Exec
+    facilitated_by INTEGER NOT NULL,
     CONSTRAINT fk_sess_event
         FOREIGN KEY (event_id)
         REFERENCES Events(event_id),
@@ -157,12 +133,10 @@ CREATE TABLE GameSessions (
 );
 
 COMMENT ON TABLE GameSessions IS
-'Each row is a single session (tied to one event, uses one copy, facilitated by one exec).';
-
+'Game sessions at events. Each facilitated by an exec using a specific copy.';
 
 -------------------------------------------------------------------------------
 -- Table: SessionParticipants
--- Many-to-many: members can join multiple sessions, each session can have multiple members.
 -------------------------------------------------------------------------------
 CREATE TABLE SessionParticipants (
     session_id INTEGER NOT NULL,
@@ -177,4 +151,4 @@ CREATE TABLE SessionParticipants (
 );
 
 COMMENT ON TABLE SessionParticipants IS
-'Which members played in which session. Composite PK: (session_id, member_id).';
+'Members participating in game sessions. Composite primary key.';
