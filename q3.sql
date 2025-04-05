@@ -1,3 +1,6 @@
+-- q3.sql
+-- We interpret "the board game that has been facilitated the most by a single exec"
+-- as: find (exec, game) with highest count, then return the game. If there's a tie, we may get multiple.
 
 WITH fac_counts AS (
   SELECT e.member_id,

@@ -4,11 +4,52 @@ CREATE SCHEMA A3GLG;
 SET SEARCH_PATH TO A3GLG;
 
 /*
-  Assumptions:
-    - Integer IDs (SERIAL) are used for all entities.
-    - Enumerated values (e.g., category, condition) are enforced via CHECK constraints.
-    - A partial index ensures only one lead per event (OrganizingCommittee).
-*/
+================================================================================
+Documentation of Choices & Assumptions
+================================================================================
+
+**Could not:**
+The following domain constraints could not be enforced without triggers/assertions:
+1. **Overlapping Participation:** 
+   - "No member can participate in two game sessions at the same time." 
+   - Requires checking temporal overlaps between sessions, which DDL cannot enforce.
+2. **Executive Facilitation Limits:** 
+   - "No exec member should facilitate two game sessions at once."
+   - Requires tracking session timestamps (not stored) and checking overlaps.
+3. **Damaged Game Usage:** 
+   - "Damaged games cannot be played." 
+   - Requires validating `Copies.condition` when inserting into `GameSessions`, which needs a trigger.
+4. **Exactly One Lead per Committee:** 
+   - The partial index ensures *at most* one lead per event but does not enforce *at least* one lead. Ensuring a committee always has exactly one lead requires a trigger.
+
+**Did not:**
+- **Enumerated Value Ranges:** 
+  - We did not explicitly use PostgreSQL `ENUM` types for fields like `category` or `condition`, opting for `CHECK` constraints instead. This avoids schema rigidity while still enforcing valid values.
+- **Facilitator Participation:** 
+  - The domain allows facilitators to play in the same game they facilitate. We did not add a constraint to explicitly permit this, as it is allowed by omission in the schema.
+
+**Extra constraints:**
+1. **Unique Email:** 
+   - Added `UNIQUE` to `Members.email` to prevent duplicate registrations, though not explicitly required by the domain.
+2. **Player Limits:** 
+   - `CHECK (min_players <= max_players)` in `BoardGames` ensures logical player ranges.
+3. **Valid Enumerations:** 
+   - `CHECK` constraints on `level_of_study`, `category`, and `condition` enforce domain-specific valid values.
+4. **Partial Index for Lead Uniqueness:** 
+   - `CREATE UNIQUE INDEX ... WHERE is_lead` ensures no event has multiple leads.
+
+**Assumptions:**
+1. **Temporal Scope:** 
+   - Events are assumed to run for their entire `event_date`; overlapping sessions are prevented by not storing start/end times.
+2. **Data Integrity:** 
+   - Free-text fields (e.g., `publisher`) are not further validated, trusting input accuracy.
+3. **Copy Tracking:** 
+   - Multiple copies of the same game are tracked via `Copies`, but no attempt is made to distinguish identical copies beyond `copy_id`.
+4. **Event Recurrence:** 
+   - Events with the same `event_name` are considered distinct if they have different `event_date`/`location`, even if part of a recurring series.
+5. **Serial IDs:** 
+   - All `SERIAL` keys (e.g., `member_id`, `game_id`) are assumed to be sufficient for unique identification.
+
 
 -------------------------------------------------------------------------------
 -- Table: Members
