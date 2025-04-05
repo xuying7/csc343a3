@@ -1,5 +1,3 @@
--- q5.sql
--- "For each event, report the average number of participants per game session."
 
 SELECT e.event_id,
        e.event_name,

@@ -1,0 +1,95 @@
+csc343h-xuying29=> \i runner.txt
+-------------------- Loading schema and data: --------------------
+
+psql:schema.ddl:2: NOTICE:  drop cascades to 8 other objects
+DETAIL:  drop cascades to table a3glg.members
+drop cascades to table a3glg.execs
+drop cascades to table a3glg.boardgames
+drop cascades to table a3glg.copies
+drop cascades to table a3glg.events
+drop cascades to table a3glg.organizingcommittee
+drop cascades to table a3glg.gamesessions
+drop cascades to table a3glg.sessionparticipants
+DROP SCHEMA
+CREATE SCHEMA
+SET
+CREATE TABLE
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+CREATE INDEX
+COMMENT
+CREATE TABLE
+COMMENT
+CREATE TABLE
+COMMENT
+INSERT 0 18
+INSERT 0 4
+INSERT 0 7
+INSERT 0 9
+INSERT 0 7
+INSERT 0 10
+INSERT 0 9
+INSERT 0 35
+
+-------------------- Query 1: -----------------------------------
+
+ event_id |       event_name       |  pct_participated
+----------+------------------------+---------------------
+        1 | Weekly Boardgame Event | 38.8888888888888889
+        2 | Weekly Boardgame Event | 55.5555555555555556
+        3 | Basement Clocktower    | 33.3333333333333333
+        4 | Basement Clocktower    | 33.3333333333333333
+        6 | Spring Social          | 16.6666666666666667
+        7 | Checkers Tournament    | 16.6666666666666667
+(6 rows)
+
+
+-------------------- Query 2: -----------------------------------
+
+       board_game        | times_played
+-------------------------+--------------
+ 7 Wonders               |            2
+ Blood on the Clocktower |            2
+ Checkers                |            2
+ Avalon                  |            1
+ Cascadia                |            1
+ Turing Machine          |            1
+(6 rows)
+
+
+-------------------- Query 3: -----------------------------------
+
+       game_title
+-------------------------
+ Blood on the Clocktower
+(1 row)
+
+
+-------------------- Query 4: -----------------------------------
+
+ member_name | num_sessions
+-------------+--------------
+ Jimbo       |            4
+ Tawfiq      |            4
+ Evelyn      |            4
+(3 rows)
+
+-------------------- Query 5: -----------------------------------
+
+ event_id |       event_name       |  avg_num_players
+----------+------------------------+--------------------
+        1 | Weekly Boardgame Event | 3.5000000000000000
+        2 | Weekly Boardgame Event | 3.3333333333333333
+        3 | Basement Clocktower    | 6.0000000000000000
+        4 | Basement Clocktower    | 6.0000000000000000
+        6 | Spring Social          | 3.0000000000000000
+        7 | Checkers Tournament    | 3.0000000000000000
+(6 rows)

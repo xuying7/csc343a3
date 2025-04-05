@@ -1,5 +1,3 @@
--- q2.sql
--- "For each game in the inventory, how many times has it been played in game sessions?"
 
 SELECT bg.title AS board_game,
        COUNT(*) AS times_played

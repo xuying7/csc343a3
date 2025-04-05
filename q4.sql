@@ -1,5 +1,3 @@
--- q4.sql
--- "Identify the club member with the highest number of unique game sessions as a player."
 
 WITH counts AS (
     SELECT m.member_id,
